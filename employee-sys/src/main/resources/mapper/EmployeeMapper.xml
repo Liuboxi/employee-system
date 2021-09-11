@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssm.mapper.EmployeeMapper">
+
+    <!--public List<Employee> getAllEmps();-->
+
+    <select id="getAllEmps" resultMap="myEmp">
+        select e.id eid,last_name,email,gender,did,d.dept_name
+        from employees e left outer join department d
+        on e.did = d.id
+    </select>
+    <resultMap id="myEmp" type="ssm.bean.Employee">
+        <id column="eid" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <association property="dept" javaType="ssm.bean.Department">
+            <id column="did" property="id"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+
+    <!-- public Employee getEmp(Integer id); -->
+    <select id="getEmp" resultMap="emp">
+        select e.id eid,last_name,email,gender,did,d.dept_name
+        from employees e join department d
+        on e.did = d.id and e.id = #{id}
+    </select>
+    <resultMap id="emp" type="ssm.bean.Employee">
+        <id column="eid" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <association property="dept" javaType="ssm.bean.Department">
+            <id column="did" property="id"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+
+
+    <!-- public void addEmp(Employee employee); -->
+    <insert id="addEmp" parameterType="ssm.bean.Employee" useGeneratedKeys="true" keyProperty="id">
+        insert into employees(last_name,email,gender,did) value (#{lastName},#{email},#{gender},#{dept.id})
+    </insert>
+
+    <update id="updateEmp">
+        update employees set last_name = #{lastName},email = #{email},gender = #{gender},did = #{dept.id} where id = #{id}
+    </update>
+
+    <!-- public void deleteEmp(Integer id); -->
+    <delete id="deleteEmp">
+        delete from employees where id = #{id}
+    </delete>
+
+
+</mapper>
